@@ -191,6 +191,65 @@ WHERE e.salary > (
 
 -- ############################################################################
 
+SELECT first_name 
+FROM employee
+UNION
+SELECT department_name
+FROM department;
+
+-- ############################################################################
+
+SELECT first_name 
+FROM employee
+UNION ALL
+SELECT department_name
+FROM department;
+
+-- ############################################################################
+
+SELECT department_id
+FROM employee
+INTERSECT
+SELECT department_id
+FROM department;
+
+-- ############################################################################
+
+SELECT first_name,
+       salary,
+       ROW_NUMBER() OVER(ORDER BY salary DESC) numero
+FROM employee;
+
+-- ############################################################################
+
+SELECT first_name,
+       salary,
+       LAG(salary) OVER(ORDER BY salary) salaire_précédent
+FROM employee;
+
+-- ############################################################################
+
+SELECT d.department_id, d.department_name, ROUND(AVG(e.salary)) as "SALAIRE_MOYEN"
+FROM employee e
+INNER JOIN department d
+ON e.department_id = d.department_id
+GROUP BY d.department_id, d.department_name
+ORDER BY d.department_id, SALAIRE_MOYEN DESC;
+
+
+SELECT e.first_name, e.last_name, e.salary, d.department_name, (SELECT ROUND(AVG(empp.salary)) FROM employee empp WHERE e.department_id = empp.department_id) as Salir_Moy
+FROM employee e
+INNER JOIN department d
+ON d.department_id = e.department_id
+WHERE e.salary > 
+(
+    SELECT AVG(emp.salary)
+    FROM employee emp
+    WHERE emp.department_id = e.department_id
+) AND e.salary > 75000
+ORDER BY d.department_name;
+
+
 BEGIN
     DBMS_OUTPUT.PUT_LINE('Bonjour PL/SQL');
 END;
