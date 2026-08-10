@@ -286,7 +286,24 @@ SELECT d.department_name,
 FROM department d
 ORDER BY Salaire_moy DESC;
 
-
+-- ============================================================
+-- Exercice : trouver les départements dont le salaire moyen
+-- est supérieur au salaire moyen global de l'entreprise.
+--
+-- La requête calcule plusieurs statistiques pour chaque
+-- département, puis ne conserve que les départements dont
+-- le salaire moyen dépasse la moyenne de tous les employés.
+--
+-- Point important :
+-- WHERE et HAVING n'ont pas le même rôle.
+--
+-- WHERE  -> filtre les lignes AVANT le GROUP BY
+-- HAVING -> filtre les groupes APRÈS le GROUP BY
+--
+-- Comme nous voulons comparer une agrégation (AVG) par
+-- département avec une autre agrégation (AVG globale),
+-- nous devons utiliser HAVING.
+-- ============================================================
 SELECT  d.department_name,
         ROUND(AVG(e.salary)) AS Salaire_moyen,
         MAX(e.salary) AS Salaire_Max,
@@ -295,12 +312,34 @@ SELECT  d.department_name,
 FROM department d
 INNER JOIN employee e
 ON d.department_id = e.department_id
+-- Création d'un groupe pour chaque département.
+-- Toutes les fonctions d'agrégation du SELECT seront donc
+-- calculées séparément pour chaque département.
 GROUP BY d.department_id, d.department_name
+-- HAVING intervient APRÈS le GROUP BY.
+--
+-- À ce stade, Oracle dispose déjà du salaire moyen de
+-- chaque département.
+--
+-- On compare donc :
+--
+--     AVG(e.salary)
+--         >
+--     moyenne globale de tous les employés
+--
+-- La sous-requête retourne une seule valeur :
+-- la moyenne de salaire de l'ensemble de la table EMPLOYEE.
 HAVING AVG(e.salary) > 
     (
         SELECT AVG(salary) 
         FROM employee
     )
+-- Tri des départements conservés du salaire moyen
+-- le plus élevé au plus faible.
+--
+-- Contrairement au WHERE/HAVING, ORDER BY intervient
+-- après le SELECT : l'alias Salaire_moyen peut donc
+-- être utilisé ici.
 ORDER BY Salaire_moyen DESC;
 
 
