@@ -248,3 +248,59 @@ WHERE e.salary >
     WHERE emp.department_id = e.department_id
 ) AND e.salary > 75000
 ORDER BY d.department_name;
+
+-- ##########################################################################
+
+/*
+    Exercice : analyse des salaires par département
+    Écris une requête qui affiche, pour chaque département :
+       - le nom du département ;
+       - le nombre d'employés ;
+       - le salaire moyen ;
+       - le salaire maximum ;
+       - le salaire minimum.
+    Le résultat doit être trié par salaire moyen décroissant.
+*/
+
+SELECT d.department_name, 
+    (
+        SELECT COUNT(emp.employee_id) 
+        FROM employee emp 
+        WHERE emp.department_id = d.department_id
+    ) AS Num_employee,
+    (
+        SELECT ROUND(AVG(emp.salary))
+        FROM employee emp
+        WHERE emp.department_id = d.department_id
+    ) AS Salaire_moy,
+    (
+        SELECT MAX(emp.salary)
+        FROM employee emp
+        WHERE emp.department_id = d.department_id
+    ) AS Salaire_max,
+    (
+        SELECT MIN(emp.salary)
+        FROM employee emp
+        WHERE emp.department_id = d.department_id
+    ) AS Salaire_min 
+FROM department d
+ORDER BY Salaire_moy DESC;
+
+
+SELECT  d.department_name,
+        ROUND(AVG(e.salary)) AS Salaire_moyen,
+        MAX(e.salary) AS Salaire_Max,
+        MIN(e.salary) AS Salaire_min,
+        COUNT(e.employee_id) AS Num_employee
+FROM department d
+INNER JOIN employee e
+ON d.department_id = e.department_id
+GROUP BY d.department_id, d.department_name
+HAVING AVG(e.salary) > 
+    (
+        SELECT AVG(salary) 
+        FROM employee
+    )
+ORDER BY Salaire_moyen DESC;
+
+
