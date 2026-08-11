@@ -262,29 +262,22 @@ ORDER BY d.department_name;
     Le résultat doit être trié par salaire moyen décroissant.
 */
 
-SELECT d.department_name, 
-    (
-        SELECT COUNT(emp.employee_id) 
-        FROM employee emp 
-        WHERE emp.department_id = d.department_id
-    ) AS Num_employee,
-    (
-        SELECT ROUND(AVG(emp.salary))
-        FROM employee emp
-        WHERE emp.department_id = d.department_id
-    ) AS Salaire_moy,
-    (
-        SELECT MAX(emp.salary)
-        FROM employee emp
-        WHERE emp.department_id = d.department_id
-    ) AS Salaire_max,
-    (
-        SELECT MIN(emp.salary)
-        FROM employee emp
-        WHERE emp.department_id = d.department_id
-    ) AS Salaire_min 
+SELECT 
+    d.department_name AS "NOM DEPARTEMENT", 
+    COUNT(e.employee_id) AS "NOMBRE EMPLOYÉS",
+    ROUND(AVG(e.salary)) AS "SALAIRE MOYEN",
+    MAX(e.salary) AS "SALAIRE MAX",
+    MIN(e.salary) AS "SALAIRE MIN"
 FROM department d
-ORDER BY Salaire_moy DESC;
+INNER JOIN employee e 
+ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING ROUND(AVG(e.salary)) > 
+    (
+        SELECT ROUND(AVG(salary))
+        FROM employee
+    )
+ORDER BY "SALAIRE MOYEN" DESC;
 
 -- ============================================================
 -- Exercice : trouver les départements dont le salaire moyen

@@ -150,8 +150,8 @@ DECLARE
     v_result_firstName employee.first_name%TYPE;
     
     CURSOR c_firstname IS
-    SELECT DISTINCT first_name
-    FROM employee;
+        SELECT DISTINCT first_name
+        FROM employee;
     
 BEGIN
     OPEN c_firstname;
@@ -159,6 +159,7 @@ BEGIN
     LOOP 
         FETCH c_firstname
         INTO v_result_firstName;
+        
         EXIT WHEN c_firstname%NOTFOUND;
         dbms_output.put_line(v_result_firstName);
     END LOOP;
@@ -186,8 +187,8 @@ END;
 
 DECLARE
     CURSOR c_firstnames IS
-    SELECT DISTINCT first_name
-    FROM employee;
+        SELECT DISTINCT first_name
+        FROM employee;
 BEGIN
     FOR fn IN c_firstnames 
     LOOP
@@ -202,17 +203,19 @@ END;
 
 DECLARE
     CURSOR c_fn(dpt_id NUMBER) IS
-    SELECT e.first_name AS fn, e.last_name AS ln, d.department_name AS dn
-    FROM employee e
-    INNER JOIN department d ON d.department_id = e.department_id
-    WHERE e.department_id = dpt_id;
+        SELECT e.first_name AS fn, e.last_name AS ln, d.department_name AS dn
+        FROM employee e
+        INNER JOIN department d ON d.department_id = e.department_id
+        WHERE e.department_id = dpt_id;
 BEGIN
     FOR i IN  1..5 LOOP
+    
         FOR fn IN c_fn(i)
         LOOP
             dbms_output.put_line(fn.fn || ' ' || UPPER(fn.ln) || ' ' || fn.dn );
         END LOOP;
         dbms_output.put_line('##############');
+    
     END LOOP;
 END;
 /
